@@ -50,6 +50,7 @@ request(options, function (error, response, body) {
        }
      };
      //console.log(options2.url);
+	 //api https://docs.travis-ci.com/api/#builds
     request(options2, function (error2, response2, body2) {
       if (!error2 && response2.statusCode == 200) {
        //console.log(body2);
@@ -59,6 +60,9 @@ request(options, function (error, response, body) {
          url = req.url;
          res.send('Jobs not found in build');
        }
+	   //header
+	   html +=  "<tr><td>job</td><td>stats</td><td>duration</td><td>start</td><td>end</td></tr>"
+	   //builds
        var foundRequestedJobNumber = false;
        jobs.forEach(function(job) {
            var state = job.state;
@@ -70,15 +74,14 @@ request(options, function (error, response, body) {
              foundRequestedJobNumber = true;
              redirectToShieldsIo(state, res);
            }
-           html += "<td>" + number + " "
+           html += "<tr><td>job" + shortNumber + "</td>";
            if(state == "passed"){
-             html += "<span style='color:green;'>passed</span>";
+             html += "<td><span style='color:green;'>passed</span></td>";
            } else if (state == "failed"){
-             html += "<span style='color:red;'>failed</span>";
+             html += "<td><span style='color:red;'>failed</span></td>";
            } else {
-             html += state;
+             html += "<td>" + state + "</td><td>" + job.duration + "</td><td>" + job.started_at + "</td><td>" + job.finished_at;
            }
-            + state;
            html += "</td></tr>";
        });
        if (requestedJobNumber != "") {
@@ -141,8 +144,8 @@ function screenShot(html, callback){
   var original = createTempPng();
   var options = {
     shotSize: {
-      width: 320
-    , height: 'all'
+      width: 480
+    , height: 320
     }
     , siteType:'html'
   }
